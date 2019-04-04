@@ -1,0 +1,67 @@
+---
+- name: add user and generate key, print public key
+  hosts: localhost
+  user: root
+ # become: yes
+  #become_method: sudo
+
+  tasks:
+  - name: Make sure we have a 'wheel' group
+    group:
+      name: wheel
+      state: present
+
+  - name: Allow 'wheel' group to have passwordless sudo
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: '^%wheel'
+      line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+      validate: 'visudo -cf %s'
+
+  - name: Remove the user 'ansible'
+    user: 
+      name: ansible 
+      state: absent 
+      remove: yes
+
+  - name: Add the user 'ansible'
+    user:
+      name: ansible
+      create_home: true
+      shell: /bin/bash
+      group: wheel
+      uid: 2222
+      generate_ssh_key: true
+      ssh_key_bits: 2048
+      state: present 
+    register: new_user_key
+  - debug: msg="{{ new_user_key.ssh_public_key }}"
+
+  - name: Changing the public_keys on remote system
+    lineinfile:
+      dest: /root/.ssh/authorized_keys
+      line: "{{ new_user_key.ssh_public_key }}"
+      #insertafter: "{{ new_user_key.ssh_public_key }}"
+    become: yes
+    delegate_to: "{{ IP }}"
+
+  # - name: Copy the user pubkey into remote machine
+  #   synchronize:
+  #     src: "~/home/ansible/.ssh/id_rsa.pub"
+  #     #dest: "/home/ansible/.ssh/authorized_keys"
+  #     dest: ".ssh/authorized_keys"
+  #     mode: push
+  #   delegate_to: root@54.229.81.184
+  #   register: syncfile
+
+  #- name: cp the key
+    #shell: scp -i /home/ansible/.ssh/id_rsa.pub centos@54.229.81.184:/tmp/
+    #delegate_to: centos@54.229.81.184:~/.ssh/authorized_keys
+    #copy: 
+      #src: /home/bob/.ssh/id_rsa.pub
+      #content: all
+      #dest: /root/tmp
+      #follow: yes
+      #remote_src: yes
+    #delegate_to: centos@54.229.81.184
