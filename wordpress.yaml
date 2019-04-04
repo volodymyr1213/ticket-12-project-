@@ -4,13 +4,14 @@
   become: yes
   become_method: sudo
   tasks:
+
     - name: Download foo.conf
       get_url:
         url: https://wordpress.org/latest.tar.gz) 
         dest: /tmp/wordpress*
-    - name: Unzip wordpress
+  
+    - name: Extract foo.tgz into /var/lib/foo
       unarchive:
-        src: no
+        src: foo.tgz
         dest: /tmp/
-
   
