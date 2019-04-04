@@ -10,7 +10,7 @@
         dest: /tmp/wordpress*
     - name: Unzip wordpress
       unarchive:
-        src: foo.tgz
+        src: no
         dest: /tmp/
 
   
