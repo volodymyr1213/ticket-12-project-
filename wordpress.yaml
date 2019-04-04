@@ -8,5 +8,9 @@
       get_url:
         url: https://wordpress.org/latest.tar.gz) 
         dest: /tmp/wordpress*
-      
+    - name: Unzip wordpress
+      unarchive:
+        src: foo.tgz
+        dest: /var/lib/foo
 
+  
