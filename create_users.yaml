@@ -2,7 +2,7 @@
 
 ## Add
 
-- name: Create groups
+- name: Create a primary group
   hosts: Centos
   group:
     name:  "{{ item }}"
