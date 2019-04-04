@@ -8,8 +8,9 @@
     tags: ['users','groups','configuration']     
   
   tasks:
-  - name: Adds user
-    hosts: Cenots
+  - hosts: all
+    name: root 
+    user: sudo
     become: yes
     become_method: sudo                     
     connection: ssh
