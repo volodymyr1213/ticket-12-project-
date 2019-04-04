@@ -11,6 +11,6 @@
     - name: Unzip wordpress
       unarchive:
         src: foo.tgz
-        dest: /var/lib/foo
+        dest: /tmp/
 
   
