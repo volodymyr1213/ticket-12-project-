@@ -10,14 +10,14 @@
   tasks:
   - hosts: all
     name: root 
-    user: sudo
+    users: sudo
     become: yes
     become_method: sudo                     
     connection: ssh
     gather_facts: no
     tasks:
     - name: Add me                # Create user to remote system 
-      user: 
+      users: 
         name : bob
         state: present
         comment: System engineering
@@ -25,7 +25,7 @@
 
 - name: Add authorized_keys for users      
   authorized_key:
-    user: "{{ item.0.me }}"
+    users: "{{ item.0.me }}"
     key:  "{{ item.1 }}"
   with_subelements:
     - "{{ users_add_users }}"
