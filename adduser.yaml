@@ -1,6 +1,6 @@
 ---
 - name: add user and generate key, print public key
-  hosts: localhost
+  hosts: All
   user: root
                                     # become: yes
                                     #become_method: sudo
