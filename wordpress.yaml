@@ -1,0 +1,18 @@
+---
+- name: Download Wordpress 
+  hosts: all
+  become:
+  become_method: sudo
+  
+  tasks:
+    - name: Download foo.conf
+      get_url:
+      url: https://wordpress.org/latest.tar.gz
+      dest: /tmp
+
+    - name: unzip the file
+      unarchive:
+        src: /tmp/wordpress*
+        dest: /tmp/
+        remote_src: no
+
