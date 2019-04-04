@@ -1,18 +1,18 @@
 ---
-  - name: unziping wordpress 
-    hosts: all
-    become: yes
-    become_method: sudo
-    tasks:
-      - name: install wp from e-link
-        get_url: 
-          url: "{{ url_input }}"
+- name: unziping wordpress 
+  hosts: all
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: install wp from e-link
+      get_url: 
+        url: "{{ url_input }}"
           #url: https://wordpress.org/latest.tar.gz)
-          dest: /tmp
-      - name: unzip the file
-        unarchive:
-          src: /tmp/wordpress*
+        dest: /tmp
+    - name: unzip the file
+      unarchive:
+        src: /tmp/wordpress*
           #format: gzip
-          dest: /tmp/
-          remote_src: True
+        dest: /tmp/
+        remote_src: True
 
