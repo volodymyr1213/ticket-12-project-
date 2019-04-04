@@ -8,7 +8,7 @@
     tags: ['users','groups','configuration']     
   
   tasks:
-  - hosts: Centos
+    hosts: Centos
     name: root 
     users: sudo
     become: yes
