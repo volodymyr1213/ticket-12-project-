@@ -2,5 +2,28 @@
 - name: Creating groups
   group: name="{{item.wheel}}" gid="{{item.gid | default(omit)}}"
   with_items: "{{groups_to_create}}"
-  tags: ['users','groups','configuration']
+  tags: ['users','groups','configuration']     # first of all to create a group
   
+  
+- name: Adds user
+  hosts: Cenots
+  become: yes
+  become_method: sudo                     
+  connection: ssh
+  gather_facts: no
+  tasks:
+    - name: Add me                # Create user to remote system 
+      user: 
+        name : bob
+        state: present
+        comment: System engineering
+
+
+- name: Add authorized_keys for users      
+  authorized_key:
+    user: "{{ item.0.me }}"
+    key:  "{{ item.1 }}"
+  with_subelements:
+    - "{{ users_add_users }}"
+    - ssh_keys
+    - skip_missing: true
