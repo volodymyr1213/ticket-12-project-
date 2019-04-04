@@ -7,7 +7,7 @@
     with_items: "{{groups_to_create}}"
     tags: ['users','groups','configuration']     
   
-  
+  tasks:
   - name: Adds user
     hosts: Cenots
     become: yes
