@@ -1,10 +1,62 @@
+
 ---
-- name: name job
+- name: Adding new user, new group and adding user`s pubkey into host machines
   hosts: all
+  #hosts: "{{ host }}"               #please specify the host where the task will be runned
+  user: root
+  #become: yes
+  #become_method: sudo
+
   tasks:
-  - name: Creating groups
-    group: name="{{item.wheel}}" gid="{{item.gid | default(omit)}}"
-    with_items: "{{groups_to_create}}"
-    tags: ['users','groups','configuration']     
-  
- 
+  - name: creating a group
+    group:
+      name: "{{ group }}"          #please specify groupname which you want to create
+      state: present
+
+  - name: Removing the user 
+    user: 
+      name: "{{ user }}"            #specify username
+      state: absent                 
+      remove: yes
+
+  - name: Adding user
+    user:
+      name: "{{ user }}"            #specify username
+      create_home: true             #creates home for that user if it doesn`t exist
+      shell: /bin/bash              #gives access to terminal
+      group: "{{ group }}"          #choose the group for that user
+      #uid: "{{ uid }}"             #you can spacify uid for that user
+      generate_ssh_key: true       #generates ssh-key for that user
+      #ssh_key_bits: 2048           #ssh_key bits for that user
+      state: present 
+    #register: new_user_key
+  #- debug: msg="{{ new_user_key.ssh_public_key }}"   #this part displays  generated pub ssh-key for that user
+
+  - name: Creating empty file
+    file: 
+    path: /home/{{ userhome }}/.ssh/authorized_keys
+    state: touch
+    owner: "{{ user }}"
+    group: "{{ wheel }}"
+
+  - name: Adding pubkey into authorized_keys 
+    #command: echo '"{{ id_rsa_pub }}"' >> /home/"{{ userhome }}""/.ssh/authorized_keys
+    command:
+    args:
+      argv:
+        #- touch /home/{{ userhome }}/.ssh/authorized_keys
+        - echo "{{ id_rsa_pub }}" >> /{{ userhome }}/.ssh/authorized_keys
+        - cat {{ userhome }}/.ssh/authorized_keys
+
+  - name: Allow 'wheel' group to have passwordless sudo
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: '^%wheel'
+      line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+      validate: 'visudo -cf %s'
+
+  - name: Restart sudo service
+    service:
+      name: sudo
+      state: restarted
