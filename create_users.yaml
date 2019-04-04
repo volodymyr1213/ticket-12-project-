@@ -1,6 +1,6 @@
 ---
 - name: name job
-  hosts: all
+  hosts: Centos
   tasks:
   - name: Creating groups
     group: name="{{item.wheel}}" gid="{{item.gid | default(omit)}}"
@@ -8,7 +8,7 @@
     tags: ['users','groups','configuration']     
   
   tasks:
-  - hosts: all
+  - hosts: Centos
     name: root 
     users: sudo
     become: yes
